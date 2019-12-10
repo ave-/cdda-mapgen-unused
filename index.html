@@ -1,0 +1,45 @@
+<html>
+<head>
+    <title>C:DDA mapgen tool: unused palette chars finder</title>
+    <script>
+        function parseThis(form) {
+            var txt = form.getElementsByTagName('textarea')[0];
+            var results = document.getElementById('results');
+            var unusedSymbols = [];
+            for (var i = 32; i < 127; i++)
+                unusedSymbols.push(String.fromCharCode(i));
+            if (txt.value.length == 0) {
+                return false;
+            }
+            try {
+                var mapRows = JSON.parse(txt.value);
+            } catch (e) {
+                alert('Syntax error');
+                return false;
+            }
+            mapRows.forEach(function (item) {
+                for (var i=0;i<item.length;i++) {
+                    if (unusedSymbols.indexOf(item.charAt(i)) !== -1) {
+                        unusedSymbols.splice(unusedSymbols.indexOf(item.charAt(i)), 1);
+                    }
+                }
+            });
+            if (unusedSymbols.length) {
+                results.innerHTML = 'Unused symbols:&nbsp;';
+                unusedSymbols.forEach(function (letter) {
+                    results.innerHTML +='&nbsp;<b>' + letter + '</b>';
+                });
+            }
+            return false;
+        }
+    </script>
+</head>
+<body>
+Paste only rows array, ie including [ and ]
+<form onsubmit="return parseThis(this);">
+    <textarea name="data" rows="30" placeholder="Paste rows array here"></textarea>
+    <input type="submit" value="Work">
+</form>
+<div id="results"></div>
+</body>
+</html>
